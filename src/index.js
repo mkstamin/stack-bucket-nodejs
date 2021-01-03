@@ -18,7 +18,27 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, '../', 'public')));
 
 app.get('/', (req, res) => {
+    // throw new Error('error');
     res.send('Hello World');
+});
+
+app.use((req, res, next) => {
+    const error = new Error('404 Not Found');
+    error.status = 404;
+    next(error);
+});
+
+app.use((error, req, res, next) => {
+    if (error.status === 404) {
+        res.status(404);
+        return res.render('errors/404');
+    }
+
+    res.status(500);
+    res.render('errors/500');
+
+    // not writen on real code that had writen by HM Nayem @TODO:  deleteable
+    return next();
 });
 
 app.listen(3000, () => {
